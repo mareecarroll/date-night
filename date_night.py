@@ -40,8 +40,10 @@ restaurants_json = requests.get(restaurant_search_url, headers=header).json()
 
 restaurant_names = [(x['restaurant']['name'],x['restaurant']['url'],x['restaurant']['average_cost_for_two']) for x in restaurants_json['restaurants']]
 
+km = int(radius_metres)/1000.
+
 print("--------------------")
-print("Highest rated restaurants within {km} distance from home:")
+print("Highest rated restaurants within {km} km from home:".format(km=km))
 print()
 
 if len(restaurant_names) == 0:
