@@ -60,7 +60,12 @@ Add your chosen value after `radius_metres = `.
 
 ## Run date-night
 
-`python date_night.py`
+```shell
+python date_night.py
+```
+
+Sample output:
+![Screenshot](datenight_screenshot.png)
 
 
 
