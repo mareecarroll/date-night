@@ -4,6 +4,10 @@ from configparser import ConfigParser
 import requests
 import random
 from pprint import pprint
+from tabulate import tabulate
+#from collections import namedtuple
+
+#Restaurant = namedtuple('Restaurant', 'name url average_cost_for_two rating votes locality')
 
 # get settings from .cfg
 config = ConfigParser()
@@ -12,6 +16,8 @@ lat = config.get('all', 'lat')  # location
 lon = config.get('all', 'lon')
 zomato_api_key = config.get('all', 'zomato_api_key')  # api key
 radius_metres = config.get('all', 'radius_metres')  # search radius
+sort_by = config.get('all', 'sort_by')
+sort_direction = config.get('all', 'sort_direction')
 
 # set API call header
 header = {
@@ -42,8 +48,8 @@ cuisine_name = random_cuisine['cuisine']['cuisine_name']
 print('\nWhich cuisine reins supreme?\n')
 print('Randomly chose cuisine:', cuisine_name)
 
-sort = 'rating'
-order = 'desc'
+sort = sort_by
+order = sort_direction
 category_dinner = 10
 
 restaurant_search_url = 'https://developers.zomato.com/api/v2.1/search'
@@ -59,29 +65,26 @@ payload = {
 
 restaurants_json = requests.get(restaurant_search_url, params=payload, headers=header).json()
 
-restaurant_names = [
-    (
-        x['restaurant']['name'],
-        x['restaurant']['url'],
-        x['restaurant']['average_cost_for_two']
+results = [['Name', 'URL', 'Average cost for two ($)', 'Rating', 'Votes', 'Locality']]
+for x in restaurants_json['restaurants']:
+    results.append(
+        [
+            x['restaurant']['name'],
+            x['restaurant']['url'].split('?')[0], # remove the extra url cruft
+            x['restaurant']['average_cost_for_two'],
+            x['restaurant']['user_rating']['aggregate_rating'],
+            x['restaurant']['user_rating']['votes'],
+            x['restaurant']['location']['locality']
+        ]
     )
-    for x in restaurants_json['restaurants']
-]
 
 # convert to km for human readability
 km = int(radius_metres)/1000.
 
-print("-" * 20)
-print(f"Highest rated restaurants within {km} km from home:\n")
+print(f"Restaurant search for location ({lat}, {lon}) radius {km} km sorted {sort_by}, {sort_direction}:")
 
-# if no restaurants found for cuisine, location, radius print sad message
-if len(restaurant_names) == 0:
+if len(results) == 1:  # only table headings
     print("Nothing found matching search criteria :(\n")
-    exit()
-
-# for each suggested restaurant, print its name, url and average cost for two people
-for name, url, avg_cost in restaurant_names:
-    url = url.split('?')[0]  # remove the extra url cruft
-    print(name, url, '~$', avg_cost, 'for two people')
-
-print("\nEnjoy date night!\n")
+else:
+    print(tabulate(results))
+    print("\nEnjoy date night!\n")

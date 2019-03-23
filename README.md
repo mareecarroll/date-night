@@ -35,6 +35,8 @@ lat = <your latitude>
 lon = <your longitude>
 zomato_api_key = <your zomato api key>
 radius_metres = <radius from lat lon in metres e.g. 1000>
+sort_by = real_distance
+sort_direction = asc
 ```
 
 ```shell
@@ -71,5 +73,15 @@ python date_night.py
 Sample output:
 ![Screenshot](datenight_screenshot.png)
 
+## Notes about Zomato API
 
+### Radius search appears to be broken
 
+IMPORTANT: The Zomato API seems to be broken at the moment for restricting results to radius. You can set it to zero metres and it still comes back with many results. See [Developer documentation - Restaurant search](https://developers.zomato.com/documentation#!/restaurant/search) to try it for yourself. When I was searching for Pho (cuisine id 1020) within 1000 m (1km) of Brunswick lat, lon (sorted by rating descending) it was giving me a suggestion of a Springvale restaurant.
+
+Because of this, while the script initially sorted by rating, it now sorts by distance from lat,lon. This can be changed in `.cfg` (see below) but while the API is broken it doesn't give some crazy results
+
+```ini
+sort_by = rating
+sort_direction = desc
+```
