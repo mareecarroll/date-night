@@ -1,8 +1,12 @@
 # date-night
 
+:sushi: :bento: :spaghetti: :hamburger: :pizza: :ramen:
+
 Can't decide which restaurant to go to for date night? This python script picks 
 a random cuisine and provides restaurant suggestions near you, to save on the 
 indecision and arguments!
+
+:sushi: :bento: :spaghetti: :hamburger: :pizza: :ramen:
 
 ## Setup
 
